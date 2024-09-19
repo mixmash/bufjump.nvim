@@ -11,6 +11,49 @@ Or, have you ever wanted to browse your jumplist _within_ the current buffer, _n
 - Neovim 0.7 or higher
 
 ## Installing
+with [lazy.nvim](https://github.com/folke/lazy.nvim)
+
+```lua
+{
+    "kwkarlwang/bufjump.nvim",
+    config = function()
+        require("bufjump").setup()
+    end,
+    opts = {
+        forward_key = "<M-o>",
+        forward_same_buf_key = "<M-i>",
+        backward_key = "<M-o>",
+        backward_same_buf = "<M-i>",
+        on_success = function ()
+            -- something
+        end,
+        excluded_filetypes = {
+        -- "oil",
+        -- "qf",
+        -- "help",
+        -- "man",
+        -- "floaterm",
+        -- "lazy",
+        -- "mason",
+        -- "lspinfo",
+        -- "lir",
+        -- "lsp-installer",
+        -- "null-ls-info",
+        -- "tsplayground",
+        -- "DressingSelect",
+        -- "Jaq",
+        },
+    },
+    -- alternatively "lazy's" way to lazy load via keymapping
+    keys = {
+        { "<M-o>", require('bufjump').backward },
+        { "<M-i>", require('bufjump').forward },
+        { "<M-o>", require('bufjump').backward_same_buf },
+        { "<M-i>", require('bufjump').forward_same_buf },
+    }
+}
+
+```
 
 with [vim-plug](https://github.com/junegunn/vim-plug)
 
@@ -31,38 +74,24 @@ use {
 
 ## Configuration
 
-bufjump.nvim provides the following configuration options:
+bufjump.nvim provides the following configuration options (and does not setup any keymappings by default):
 
 - `forward_key`, `backward_key` the keymappings to jump to the next and previous
-  buffer in the jumplist respectively. The default keymappings for `forward_key` and `backward_key` are `CTRL-n` and `CTRL-p` respectively. You can deactivate these keybindings by passing `false`.
-
+  buffer in the jumplist respectively.
 - `forward_same_buf_key`, `backward_same_buf_key` provide keymappings to jump the the
-  next and previous jumplist positions within the same buffer. These have no default keybindings. Suggestion: `<M-i>` and `<M-o>`.
+  next and previous jumplist positions within the same buffer.
+- `on_success` a function that is executed when a jump is successfully executed.
+- `excluded_filetypes` a list of filetypes that are skipped for the jumps
 
-Default configuration:
-
-```lua
-use({
-    "kwkarlwang/bufjump.nvim",
-    config = function()
-        require("bufjump").setup({
-            forward_key = "<C-n>",
-            backward_key = "<C-p>",
-            on_success = nil
-        })
-    end,
-})
-
-```
 
 You can also bind the function `forward`, `backward` `forward_same_buf`, `backward_same_buf` as followed
 
 ```lua
 local opts = { silent=true, noremap=true }
-vim.api.nvim_set_keymap("n", "<M-o>", ":lua require('bufjump').backward()<cr>", opts)
-vim.api.nvim_set_keymap("n", "<M-i>", ":lua require('bufjump').forward()<cr>", opts)
-vim.api.nvim_set_keymap("n", "<M-o>", ":lua require('bufjump').backward_same_buf()<cr>", opts)
-vim.api.nvim_set_keymap("n", "<M-i>", ":lua require('bufjump').forward_same_buf()<cr>", opts)
+vim.keymap.set("n", "<M-o>", require('bufjump').backward, opts)
+vim.keymap.set("n", "<M-i>", require('bufjump').forward, opts)
+vim.keymap.set("n", "<M-o>", require('bufjump').backward_same_buf, opts)
+vim.keymap.set("n", "<M-i>", require('bufjump').forward_same_buf, opts)
 ```
 
 ### on_success
@@ -144,3 +173,8 @@ Buffer 2    line 10
 Buffer 2    line 20
 Buffer 2    line 30     <--
 ```
+
+### Notable differences from the original
+- integrates [phanen's](https://github.com/phanen) [PR](https://github.com/kwkarlwang/bufjump.nvim/pull/5)
+- adds the excluded filetypes table to skip certain buffers
+
