@@ -25,7 +25,7 @@ with [lazy.nvim](https://github.com/folke/lazy.nvim)
         backward_key = "<M-o>",
         backward_same_buf = "<M-i>",
         on_success = function ()
-            -- something
+            vim.cmd([[execute "normal! g`\"zz"]])
         end,
         excluded_filetypes = {
         -- "oil",
